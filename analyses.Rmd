@@ -73,12 +73,17 @@ get_nmb_est <- function() {
 ```{r}
 cl <- parallel::makeCluster(parallel::detectCores())
 
-sim <- do_nmb_sim(
-  n_sims = 2500, n_valid = 10000, sim_auc = 0.75,
-  event_rate = 0.008, fx_nmb_training = get_nmb, fx_nmb_evaluation = get_nmb_est,
-  cl = cl
-)
-
+if("primary_analyses_sim.rds" %in% list.files("sim_objects")) {
+  sim <- readRDS("sim_objects/primary_analyses_sim.rds")
+} else {
+  sim <- do_nmb_sim(
+    n_sims = 2500, n_valid = 10000, sim_auc = 0.75,
+    event_rate = 0.008, fx_nmb_training = get_nmb, fx_nmb_evaluation = get_nmb_est,
+    cl = cl
+  )
+  
+  saveRDS(sim, "sim_objects/primary_analyses_sim.rds")
+}
 
 rename_vec <- c("Treat All" = "all",
                 "Treat None" = "none", 
@@ -112,7 +117,57 @@ primary_analyses_ft <-
   autofit() 
 
 save_as_docx(primary_analyses_ft, path="output/primary-analyses-table.docx")
-primary_analyses_ft
+
 ```
 
+# Sensitivity analyses (inpatient falls)
+```{r}
+if("sim-screen-auc.rds" %in% list.files("sim_objects")) {
+  sim_screen_auc <- readRDS("sim_objects/sim-screen-auc.rds")
+} else {
+  sim_screen_auc <- screen_simulation_inputs(
+    n_sims = 2500, n_valid = 10000, sim_auc = seq(0.6, 0.95, 0.05),
+    event_rate = 0.008, fx_nmb_training = get_nmb, fx_nmb_evaluation = get_nmb_est,
+    cl = cl
+  )
+  saveRDS(sim_screen_auc, "sim_objects/sim-screen-auc.rds")
+}
+
+plot(
+  sim_screen_auc, 
+  rename_vector = rename_vec, 
+  methods_order = methods_show, 
+  dodge_width = 0.015,
+  plot_range=F
+)
+
+ggsave("output/auc-screen.png", dpi=1200, width=7, height=5)
+
+
+
+if("sim-screen-event-rate.rds" %in% list.files("sim_objects")) {
+  sim_screen_event_rate <- readRDS("sim_objects/sim-screen-event-rate.rds")
+} else {
+  sim_screen_event_rate <- screen_simulation_inputs(
+    n_sims = 2500, n_valid = 10000, sim_auc = 0.75,
+    event_rate = c(0.0025, 0.008, 0.02, 0.05, 0.075, 0.1), 
+    fx_nmb_training = get_nmb, fx_nmb_evaluation = get_nmb_est,
+    cl = cl
+  )
+  saveRDS(sim_screen_event_rate, "sim_objects/sim-screen-event-rate.rds")
+}
+
+
+plot(
+  sim_screen_event_rate, 
+  rename_vector = rename_vec, 
+  methods_order = methods_show, 
+  dodge_width = 0.003,
+  plot_alpha=0.4,
+  plot_range=F
+) +
+  guides(x=guide_axis(angle=45))
+
+ggsave("output/event-rate-screen.png", dpi=1200, width=7, height=5)
+```
 
