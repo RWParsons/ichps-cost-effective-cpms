@@ -15,6 +15,11 @@ library(predictNMB)
 devtools::source_url("https://raw.githubusercontent.com/RWParsons/cost-effective-cpms/main/src/inputs.R")
 ```
 
+```{r, echo=F}
+fig_height <- 3.5
+fig_width <- 5.5
+```
+
 ```{r}
 get_nmb <- function() {
   # WTP from Edney et al (2018), Pharmacoeconomics
@@ -105,7 +110,7 @@ methods_show <- c("Treat All",
                   "ROC-01")
 
 plot(sim, rename_vector = rename_vec, methods_order = methods_show_cutpoint_methods_only)
-ggsave("output/primary-analyses.png", dpi=1200, width=7, height=5)
+ggsave("output/primary-analyses.png", dpi=1200, width=fig_width, height=fig_height)
 
 
 primary_analyses_ft <- 
@@ -141,7 +146,7 @@ plot(
   plot_range=F
 )
 
-ggsave("output/auc-screen.png", dpi=1200, width=7, height=5)
+ggsave("output/auc-screen.png", dpi=1200, width=fig_width, height=fig_height)
 
 
 
@@ -168,6 +173,6 @@ plot(
 ) +
   guides(x=guide_axis(angle=45))
 
-ggsave("output/event-rate-screen.png", dpi=1200, width=7, height=5)
+ggsave("output/event-rate-screen.png", dpi=1200, width=fig_width, height=fig_height)
 ```
 
