@@ -1,0 +1,41 @@
+---
+output: github_document
+link-citations: yes
+bibliography: README-bibliography.bib
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(flextable)
+```
+
+# Cost-effective clinical prediction models
+
+This repository contains the code used to generate the results presented in my [ICHPS2023](https://ww2.amstat.org/meetings/ichps/2023/) poster.
+
+### Value-optimising cutpoint
+
+In this project, we propose using a cutpoint which maximises the net monetary benefit. A shiny app to select the cutpoint (among others) using simulated or user-provided data is available [here](https://aushsi.shinyapps.io/cost-effective-cpms-app/) and the code for that app is [here](https://github.com/RWParsons/cost-effective-cpms-app).
+
+### {predictNMB} <a href='https://rwparsons.github.io/predictNMB/'><img src='https://raw.githubusercontent.com/RWParsons/predictNMB/ec40de8e9a08b49f2a22063e7f416cbd46a72155/man/figures/logo.png' align="right" height="139" /></a>
+
+This work led to the development of an R package, `predictNMB`. It is a wrapper package that lets the user perform a simulation study to evaluate a hypothetical clinical prediction model that's used to assign patient interventions and evaluates it using the net monetary benefit (NMB). For more details on this package, see the website: <https://rwparsons.github.io/predictNMB/>
+
+The analyses and the figures presented in the poster were made using predictNMB.
+
+
+### Inputs used for inpatient falls use case presented in the poster
+
+
+| Input      | Citation |    Value | Transformed distribution |
+| -------- | -------- | -------- | -------- |
+| Treatment cost of fall prevention | [@hill2015fall]| Cost = 77.30 | N/A |
+| Cost of in-hospital fall | [@morello2015extra]| Mean = 6669 [95% CI: 3888, 9450] | Gamma(22.0516, 0.0033) |
+| Effectiveness of fall prevention | [@haines2011patient]|  Adjusted HR = 0.43 [95% CI: 0.24, 0.78] | Exp(Normal(-0.8440, 0.3038)) |
+| Utility decrement of falling | [@latimer2013cost]| <b>Utility (decrement, n):</b><br>No injury (-0.02, 40);<br>minor injury (-0.04, 31);<br>moderate injury (-0.06, 18);<br>major injury (-0.11, 9) | Beta(2.4253, 55.4053) |
+
+The model AUC of 0.75 seemed reasonable but there is a large spread in reported levels of performance in the literature that we reviewed [@parsons2022inpatient].
+
+The expected event rate of 0.008 is based on a summary of our own data at Metro South Health hospitals. Across the 5 hospitals during 2018-2021 (inclusive), there were about 1.1 million admissions and 9200 falls, which works out to be approximately 0.008 falls per admission.
+
+### References
