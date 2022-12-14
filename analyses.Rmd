@@ -114,7 +114,13 @@ ggsave("output/primary-analyses.png", dpi=1200, width=fig_width, height=fig_heig
 
 
 primary_analyses_ft <- 
-  make_summary_table(sim, rename_vector=rename_vec) %>% 
+  make_summary_table(
+    sim, 
+    rename_vector=rename_vec,
+    agg_functions = list(
+      median = function(x) round(stats::median(x)),
+      `95% CI` = function(x) paste0(round(stats::quantile(x, probs = c(0.025, 0.975))), collapse = " to "))
+  ) %>% 
   arrange(desc(median)) %>%
   filter(method %in% methods_show_cutpoint_methods_only) %>%
   rename("Cutpoint Method" = method, "Median NMB ($)" = median) %>%

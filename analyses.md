@@ -1,7 +1,7 @@
 analyses
 ================
 Rex Parsons
-2022-12-09
+2022-12-14
 
 ``` r
 get_nmb <- function() {
@@ -95,14 +95,20 @@ methods_show <- c("Treat All",
 plot(sim, rename_vector = rename_vec, methods_order = methods_show_cutpoint_methods_only)
 ```
 
-![](analyses_files/figure-gfm/unnamed-chunk-2-1.png)<!-- -->
+![](analyses_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
 
 ``` r
-ggsave("output/primary-analyses.png", dpi=1200, width=7, height=5)
+ggsave("output/primary-analyses.png", dpi=1200, width=fig_width, height=fig_height)
 
 
 primary_analyses_ft <- 
-  make_summary_table(sim, rename_vector=rename_vec) %>% 
+  make_summary_table(
+    sim, 
+    rename_vector=rename_vec,
+    agg_functions = list(
+      median = function(x) round(stats::median(x)),
+      `95% CI` = function(x) paste0(round(stats::quantile(x, probs = c(0.025, 0.975))), collapse = " to "))
+  ) %>% 
   arrange(desc(median)) %>%
   filter(method %in% methods_show_cutpoint_methods_only) %>%
   rename("Cutpoint Method" = method, "Median NMB ($)" = median) %>%
@@ -139,10 +145,10 @@ plot(
 
     ## Screening over sim_auc by default
 
-![](analyses_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
+![](analyses_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
 
 ``` r
-ggsave("output/auc-screen.png", dpi=1200, width=7, height=5)
+ggsave("output/auc-screen.png", dpi=1200, width=fig_width, height=fig_height)
 
 
 
@@ -174,8 +180,8 @@ plot(
 
     ## Screening over event_rate by default
 
-![](analyses_files/figure-gfm/unnamed-chunk-3-2.png)<!-- -->
+![](analyses_files/figure-gfm/unnamed-chunk-4-2.png)<!-- -->
 
 ``` r
-ggsave("output/event-rate-screen.png", dpi=1200, width=7, height=5)
+ggsave("output/event-rate-screen.png", dpi=1200, width=fig_width, height=fig_height)
 ```
